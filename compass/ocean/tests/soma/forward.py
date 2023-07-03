@@ -87,8 +87,8 @@ class Forward(Step):
         self.add_namelist_file('compass.ocean.tests.soma', 'namelist.forward')
 
         if long:
-            output_interval = "0010_00:00:00"
-            restart_interval = "0010_00:00:00"
+            output_interval = "0003-00-00_00:00:00"
+            restart_interval = "0002-00-00_00:00:00"
         else:
             output_interval = res_params['run_duration'].replace("'", "")
             restart_interval = "0030_00:00:00"
@@ -107,7 +107,7 @@ class Forward(Step):
         if long:
             # run for 3 years instead of 3 time steps
             options['config_start_time'] = "'0001-01-01_00:00:00'"
-            options['config_stop_time'] = "'0004-01-01_00:00:00'"
+            options['config_stop_time'] = "'0003-01-01_00:00:00'"
             options['config_run_duration'] = "'none'"
 
         if three_layer:

@@ -1,5 +1,5 @@
-from skopt.sampler import Grid
-from skopt.space import Space
+# from skopt.sampler import Grid
+# from skopt.space import Space
 
 from compass.ocean.tests.soma.analysis import Analysis
 from compass.ocean.tests.soma.forward import Forward
@@ -97,22 +97,28 @@ class SomaEnsemble(TestCase):
             with_surface_restoring=with_surface_restoring,
             three_layer=three_layer))
 
-        space = Space([(200.0, 2000.0, "uniform"),      # GM_constant_kappa
-                       (0.0, 3000.0, "uniform"),        # Redi_constant_kappa
-                       (0.0, 1e-4, "uniform"),          # cvmix_background_diff
-                       (1e-4, 1e-2, "uniform"),         # implicit_bottom_drag
-                       (0.04, 0.08, "uniform"),         # submesoscale_Ce
-                       (200.0, 5000.0, "uniform"),      # submesoscale_Lfmin
-                       (86400.0, 864000.0, "uniform"),  # submesoscale_tau
-                       ])
-        n_samples = 50
+        # space = Space([(0.0, 1e-4, "uniform")])      # Redi_constant_kappa
+        #               (200.0, 2000.0, "uniform"),        # GM_constant_kappa
+        #         (0.0, 3000.0, "uniform"),          # cvmix_background_diff
+        #              (1e-4, 1e-2, "uniform"),         # implicit_bottom_drag
+        #              (0.04, 0.08, "uniform"),         # submesoscale_Ce
+        #              (200.0, 5000.0, "uniform"),      # submesoscale_Lfmin
+        #              (86400.0, 864000.0, "uniform"),  # submesoscale_tau
+        #              ])
+        # n_samples = 1000
 
-        grid = Grid(border="include", use_full_layout=False)
-        x = grid.generate(space.dimensions, n_samples)
+        # grid = Grid(border="include", use_full_layout=False)
+        # x = grid.generate(space.dimensions, n_samples)
+        from scipy.stats import qmc
+        sampler = qmc.LatinHypercube(d=7)
+        sample = sampler.random(n=1000)
+        l_bounds = [200.0, 0.0, 0.0, 1e-4, 0.04, 200.0, 86400.0]
+        u_bounds = [2000.0, 3000.0, 1e-4, 1e-2, 0.08, 5000.0, 864000.0]
+        scaled_sample = qmc.scale(sample, l_bounds, u_bounds)
 
         option_list = []
         option_list.append({})
-        for opt in x:
+        for opt in scaled_sample:
             options = {}
             options['config_GM_constant_kappa'] = str(opt[0])
             options['config_Redi_constant_kappa'] = str(opt[1])
